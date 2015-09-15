@@ -75,14 +75,19 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
         }
     }
 
-    /*
+    
     // MARK: - Navigation
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
+        TwitterClient.sharedInstance.GET("1.1/account/verify_credentials.json", parameters: nil, success: { (operation: AFHTTPRequestOperation!, response: AnyObject!) -> Void in
+            var user = User(dictionary: response as! NSDictionary)
+            User.currentUser = user
+            }, failure: { (operation: AFHTTPRequestOperation!, error: NSError!) -> Void in
+                println("Error getting current user")
+        })
     }
-    */
+    
 
 }

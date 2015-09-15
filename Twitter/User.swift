@@ -37,8 +37,11 @@ class User: NSObject {
             self.screenname = nil
         }
 
-        let profileImageUrlString = dictionary["profile_image_url"] as? String
+        var profileImageUrlString = dictionary["profile_image_url"] as? String
         if profileImageUrlString != nil {
+            // Get Original User's Image
+            let range = profileImageUrlString!.rangeOfString("_normal", options: .RegularExpressionSearch)
+            profileImageUrlString = profileImageUrlString!.stringByReplacingCharactersInRange(range!, withString: "")
             self.profileImageURL = NSURL(string: profileImageUrlString!)!
         } else {
             self.profileImageURL = nil
