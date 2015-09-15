@@ -24,9 +24,21 @@ class Tweet: NSObject {
         self.createdAt = formatter.dateFromString(created_AtString!)
         
         if NSCalendar().isDateInToday(createdAt!) == false {
-            var getHourFormatter = NSDateFormatter()
-            getHourFormatter.dateFormat = "H"
-            self.createdAtString = getHourFormatter.stringFromDate(createdAt!) + "h"
+            var timeInterval = createdAt!.timeIntervalSinceNow
+            let timeIntervalRounded = NSInteger(-timeInterval)
+            if timeIntervalRounded < 3600 {
+                if timeIntervalRounded < 60 {
+                    // If tweet is created within 1 minute
+                    self.createdAtString = "\(timeIntervalRounded%60)s"
+                } else {
+                    // If tweet is created within 1 hour
+                    self.createdAtString = "\((timeIntervalRounded/60)%60)m"
+                }
+            } else {
+                // If tweet is created more than 1 hour ago
+                self.createdAtString = "\(timeIntervalRounded/3600)h"
+            }
+            
         } else {
             var getHourFormatter = NSDateFormatter()
             getHourFormatter.dateFormat = "MM/dd/yyyy"

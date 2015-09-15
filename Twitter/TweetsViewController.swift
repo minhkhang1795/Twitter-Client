@@ -18,28 +18,21 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.rowHeight = UITableViewAutomaticDimension
-        tableView.estimatedRowHeight = 200
-
-        // Do any additional setup after loading the view.
-        TwitterClient.sharedInstance.homeTimelineWithParams(nil, completion: { (tweets, error) -> () in
-            self.tweets = tweets
-            self.tableView.reloadData()
-            println(self.tweets?[3].text)
-        })
+        self.tableView.dataSource = self
+        self.tableView.delegate = self
+        self.tableView.rowHeight = UITableViewAutomaticDimension
+        self.tableView.estimatedRowHeight = 120
         
-        //fetchTweets()
-        refreshControl.addTarget(self, action: "fetchTweets", forControlEvents: UIControlEvents.ValueChanged)
-
+        self.fetchTweets()
+        self.tableView.reloadData()
+        self.refreshControl.addTarget(self, action: "onRefresh", forControlEvents: UIControlEvents.ValueChanged)
+        self.tableView.insertSubview(refreshControl, atIndex: 0)
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
 
     @IBAction func onLogout(sender: AnyObject) {
         User.currentUser?.logout()
@@ -66,17 +59,22 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
     }
     
-    // - Pull to refresh
     func fetchTweets() {
-        Tweet.fetchTweets({ (tweets: [Tweet]) -> Void in
-            dispatch_async(dispatch_get_main_queue(), {
-                self.tweets = tweets
-                self.tableView.reloadData()
-                self.refreshControl?.endRefreshing()
-            })
-            }, error: nil)
+        TwitterClient.sharedInstance.homeTimelineWithParams(nil, completion: { (tweets, error) -> () in
+            self.tweets = tweets
+            self.tableView.reloadData()
+        })
     }
     
+    // - Pull to refresh
+    
+    func onRefresh() {
+        dispatch_async(dispatch_get_main_queue()) {
+            self.fetchTweets()
+            self.refreshControl.endRefreshing()
+        }
+    }
+
     /*
     // MARK: - Navigation
 
