@@ -9,19 +9,29 @@
 import UIKit
 
 class Tweet: NSObject {
-    var user: User?
-    var text: String?
-    var createdAtString: String?
-    var createdAt: NSDate?
+    let user: User?
+    let text: String?
+    let createdAtString: String?
+    let createdAt: NSDate?
 
     init(dictionary: NSDictionary) {
-        user = User(dictionary: dictionary["user"] as! NSDictionary)
-        text = dictionary["text"] as? String
-        createdAtString = dictionary["created_at"] as? String
+        self.user = User(dictionary: dictionary["user"] as! NSDictionary)
+        self.text = dictionary["text"] as? String
         
+        var created_AtString = dictionary["created_at"] as? String
         var formatter = NSDateFormatter()
         formatter.dateFormat = "EEE MMM d HH:mm:ss Z y"
-        createdAt = formatter.dateFromString(createdAtString!)
+        self.createdAt = formatter.dateFromString(created_AtString!)
+        
+        if NSCalendar().isDateInToday(createdAt!) == false {
+            var getHourFormatter = NSDateFormatter()
+            getHourFormatter.dateFormat = "H"
+            self.createdAtString = getHourFormatter.stringFromDate(createdAt!) + "h"
+        } else {
+            var getHourFormatter = NSDateFormatter()
+            getHourFormatter.dateFormat = "MM/dd/yyyy"
+            self.createdAtString = getHourFormatter.stringFromDate(createdAt!)
+        }
     }
     
     class func tweetWithArray(array: [NSDictionary]) -> [Tweet]{
@@ -33,5 +43,4 @@ class Tweet: NSObject {
         
         return tweets
     }
-    
 }

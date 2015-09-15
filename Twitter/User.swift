@@ -14,19 +14,42 @@ let userDidLoginNotification = "userDidLoginNotification"
 let userDidLogoutNotification = "userDidLogoutNotification"
 
 class User: NSObject {
-    var name: String?
-    var screenname: String?
-    var profileImageUrl: String?
-    var tagline: String?
+    let name: String?
+    let screenname: String?
+    let profileImageURL: NSURL?
+    let tagline: String?
     var dictionary: NSDictionary
 
     init(dictionary: NSDictionary) {
         self.dictionary = dictionary
         
-        name = dictionary["name"] as? String
-        screenname = dictionary["screen_name"] as? String
-        profileImageUrl = dictionary["profile_image_url"] as? String
-        tagline = dictionary["description"] as? String
+        let userName = dictionary["name"] as? String
+        if userName != nil {
+            self.name = userName
+        } else {
+            self.name = nil
+        }
+        
+        let screenName = dictionary["screen_name"] as? String
+        if screenName != nil {
+            self.screenname = "@" + screenName!
+        } else {
+            self.screenname = nil
+        }
+
+        let profileImageUrlString = dictionary["profile_image_url"] as? String
+        if profileImageUrlString != nil {
+            self.profileImageURL = NSURL(string: profileImageUrlString!)!
+        } else {
+            self.profileImageURL = nil
+        }
+        
+        let tagLine = dictionary["description"] as? String
+        if tagLine != nil {
+            self.tagline = tagLine
+        } else {
+            self.tagline = nil
+        }
     }
     
     func logout() {
@@ -35,6 +58,7 @@ class User: NSObject {
         
         NSNotificationCenter.defaultCenter().postNotificationName(userDidLogoutNotification, object: nil)
     }
+    
     class var currentUser: User? {
         get {
             if _currentUser == nil {
