@@ -18,13 +18,11 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.fetchTweets()
         self.tableView.dataSource = self
         self.tableView.delegate = self
         self.tableView.rowHeight = UITableViewAutomaticDimension
         self.tableView.estimatedRowHeight = 120
-        
-        self.fetchTweets()
-        self.tableView.reloadData()
         self.refreshControl.addTarget(self, action: "onRefresh", forControlEvents: UIControlEvents.ValueChanged)
         self.tableView.insertSubview(refreshControl, atIndex: 0)
     }
@@ -79,8 +77,7 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
     // MARK: - Navigation
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+        // Update user's info if needed (for example: when user changes his profile picture on other devices)
         TwitterClient.sharedInstance.GET("1.1/account/verify_credentials.json", parameters: nil, success: { (operation: AFHTTPRequestOperation!, response: AnyObject!) -> Void in
             var user = User(dictionary: response as! NSDictionary)
             User.currentUser = user

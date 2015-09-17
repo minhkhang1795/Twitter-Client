@@ -49,15 +49,10 @@ class ComposeViewController: UIViewController, UITextViewDelegate {
         let tweetText = textView.text
         let charactersRemaining = maxCharacterAllowed - count(tweetText)
         self.characterCountLabel.text = "\(charactersRemaining)/140"
-        self.characterCountLabel.textColor = charactersRemaining >= 0 ? .lightGrayColor() : .redColor()
-        self.tweetButton.tintColor = charactersRemaining == 140 ? .lightGrayColor() : self.view.tintColor
+        self.characterCountLabel.textColor = charactersRemaining > 10 ? .lightGrayColor() : .redColor()
+        self.tweetButton.tintColor = (count(tweetText) > 0 && count(tweetText) <= 140) ? self.view.tintColor : .lightGrayColor()
         self.adjustScrollViewContentSize()
         
-        NSNotificationCenter.defaultCenter().addObserverForName(UIKeyboardDidShowNotification, object: nil, queue: nil) { (notification: NSNotification!) -> Void in
-            let userInfo = notification.userInfo!
-            let keyboardFrameEnd = (userInfo[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
-            self.view.frame = CGRectMake(0, 0, keyboardFrameEnd.size.width, keyboardFrameEnd.origin.y)
-        }
     }
 
     @IBAction func onCancel(sender: AnyObject) {
@@ -65,18 +60,16 @@ class ComposeViewController: UIViewController, UITextViewDelegate {
     }
 
     @IBAction func onTweet(sender: AnyObject) {
-        let tweet = self.textView.text
-        if (count(tweet) != 0) {
-            var params: NSDictionary = ["status": tweet]
+        let tweetText = self.textView.text
+        if (count(tweetText) > 0 && count(tweetText) <= 140) {
+            var params: NSDictionary = ["status": tweetText]
             
-            TwitterClient.sharedInstance.tweetWithParams(params, completion: { (status, error) -> () in
+            TwitterClient.sharedInstance.tweetWithParams(params, completion: { (tweet, error) -> () in
                 if error != nil {
                     NSLog("error posting status: \(error)")
                 }
-                NSNotificationCenter.defaultCenter().postNotificationName("StatusPosted", object: status)
                 self.dismissViewControllerAnimated(true, completion: nil)
             })
-
         }
     }
     

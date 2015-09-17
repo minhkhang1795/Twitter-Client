@@ -43,5 +43,18 @@ class TweetCell: UITableViewCell {
 
         // Configure the view for the selected state
     }
-
+    
+    @IBAction func onFavorite(sender: UIButton) {
+        var params: NSDictionary = ["id": tweet.ID!]
+        
+        TwitterClient.sharedInstance.favoriteTweetWithParams(params, isFavorited: tweet.isFavorite, completion: { (tweet, error) -> () in
+            if tweet != nil {
+               self.tweet = tweet
+            }
+            if error != nil {
+                NSLog("error tweeting: \(error)")
+            }
+        })
+    }
+    
 }

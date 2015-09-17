@@ -18,29 +18,52 @@ class TwitterClient: BDBOAuth1RequestOperationManager {
     class var sharedInstance: TwitterClient {
         struct Static {
             static let instance = TwitterClient(baseURL: twitterBaseURL, consumerKey: twitterConsumerKey, consumerSecret: twitterConsumerSecret)
-
         }
         return Static.instance
     }
     
     func homeTimelineWithParams(params: NSDictionary?, completion: (tweets: [Tweet]?, error: NSError?) -> ()) {
-        
-        TwitterClient.sharedInstance.GET("1.1/statuses/home_timeline.json", parameters: params, success: { (operation: AFHTTPRequestOperation!, response: AnyObject!) -> Void in
-            var tweets = Tweet.tweetWithArray(response as! [NSDictionary])
-            completion(tweets: tweets, error: nil)
-        }, failure: { (operation: AFHTTPRequestOperation!, error: NSError!) -> Void in
-            completion(tweets: nil, error: error)
+        TwitterClient.sharedInstance.GET("1.1/statuses/home_timeline.json", parameters: params,
+            success: { (operation: AFHTTPRequestOperation!, response: AnyObject!) -> Void in
+                var tweets = Tweet.tweetWithArray(response as! [NSDictionary])
+                completion(tweets: tweets, error: nil)
+                
+            }, failure: { (operation: AFHTTPRequestOperation!, error: NSError!) -> Void in
+                completion(tweets: nil, error: error)
+                if error != nil {
+                    println(error)
+                }
         })
     }
     
     func tweetWithParams(params: NSDictionary?, completion: (tweet: Tweet?, error: NSError?) -> ()) {
-        TwitterClient.sharedInstance.POST("1.1/statuses/update.json", parameters: params, success: { (operation: AFHTTPRequestOperation!, response: AnyObject!) -> Void in
+        TwitterClient.sharedInstance.POST("1.1/statuses/update.json", parameters: params,
+            success: { (operation: AFHTTPRequestOperation!, response: AnyObject!) -> Void in
+                var tweet = Tweet(dictionary: response as! NSDictionary)
+                completion(tweet: tweet, error: nil)
+                
+            }) { (operation: AFHTTPRequestOperation!, error: NSError!) -> Void in
+                println("error posting tweet")
+                completion(tweet: nil, error: error)
+        }
+    }
+    
+    func favoriteTweetWithParams(params: NSDictionary?, isFavorited: Int?, completion: (tweet: Tweet?, error: NSError?) -> ()) {
+        var URL: String?
+        if isFavorited! == 0 {
+            URL = "1.1/favorites/create.json"
+            println(isFavorited)
+        } else {
+            URL = "1.1/favorites/destroy.json"
+            println(isFavorited)
+        }
+        
+        TwitterClient.sharedInstance.POST(URL, parameters: params, success: { (operation: AFHTTPRequestOperation!, response: AnyObject!) -> Void in
             var tweet = Tweet(dictionary: response as! NSDictionary)
             completion(tweet: tweet, error: nil)
             
-        }) { (operation: AFHTTPRequestOperation!, error: NSError!) -> Void in
-            println("error posting tweet")
-            completion(tweet: nil, error: error)
+            }) { (operation: AFHTTPRequestOperation!, error: NSError!) -> Void in
+                completion(tweet: nil, error: error)
         }
     }
     

@@ -13,6 +13,8 @@ class Tweet: NSObject {
     let text: String?
     let createdAtString: String?
     let createdAt: NSDate?
+    let ID: String?
+    let isFavorite: Int?
 
     init(dictionary: NSDictionary) {
         self.user = User(dictionary: dictionary["user"] as! NSDictionary)
@@ -30,10 +32,12 @@ class Tweet: NSObject {
                 if timeIntervalRounded < 60 {
                     // If tweet is created within 1 minute
                     self.createdAtString = "\(timeIntervalRounded%60)s"
+                
                 } else {
                     // If tweet is created within 1 hour
                     self.createdAtString = "\((timeIntervalRounded/60)%60)m"
                 }
+            
             } else {
                 // If tweet is created more than 1 hour ago
                 self.createdAtString = "\(timeIntervalRounded/3600)h"
@@ -44,9 +48,12 @@ class Tweet: NSObject {
             getHourFormatter.dateFormat = "MM/dd/yyyy"
             self.createdAtString = getHourFormatter.stringFromDate(createdAt!)
         }
+        
+        self.ID = dictionary["id_str"] as? String
+        self.isFavorite = dictionary["favorited"] as? Int
     }
     
-    class func tweetWithArray(array: [NSDictionary]) -> [Tweet]{
+    class func tweetWithArray(array: [NSDictionary]) -> [Tweet] {
         var tweets = [Tweet]()
         
         for dictionary in array {
@@ -55,4 +62,6 @@ class Tweet: NSObject {
         
         return tweets
     }
+    
+    
 }
