@@ -22,7 +22,7 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
         self.tableView.dataSource = self
         self.tableView.delegate = self
         self.tableView.rowHeight = UITableViewAutomaticDimension
-        self.tableView.estimatedRowHeight = 120
+        self.tableView.estimatedRowHeight = 112
         self.refreshControl.addTarget(self, action: "onRefresh", forControlEvents: UIControlEvents.ValueChanged)
         self.tableView.insertSubview(refreshControl, atIndex: 0)
     }
@@ -78,12 +78,15 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         // Update user's info if needed (for example: when user changes his profile picture on other devices)
-        TwitterClient.sharedInstance.GET("1.1/account/verify_credentials.json", parameters: nil, success: { (operation: AFHTTPRequestOperation!, response: AnyObject!) -> Void in
-            var user = User(dictionary: response as! NSDictionary)
-            User.currentUser = user
-            }, failure: { (operation: AFHTTPRequestOperation!, error: NSError!) -> Void in
-                println("Error getting current user")
-        })
+        if segue.identifier == "tweeting" {
+            TwitterClient.sharedInstance.GET("1.1/account/verify_credentials.json", parameters: nil, success: { (operation: AFHTTPRequestOperation!, response: AnyObject!) -> Void in
+                var user = User(dictionary: response as! NSDictionary)
+                User.currentUser = user
+                }, failure: { (operation: AFHTTPRequestOperation!, error: NSError!) -> Void in
+                    println("Error getting current user")
+            })
+        }
+        
     }
     
 

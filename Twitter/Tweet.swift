@@ -13,8 +13,10 @@ class Tweet: NSObject {
     let text: String?
     let createdAtString: String?
     let createdAt: NSDate?
+    var retweetCount: Int?
+    var favoriteCount: Int?
     let ID: String?
-    let isFavorite: Int?
+    var isFavorite: Int?
 
     init(dictionary: NSDictionary) {
         self.user = User(dictionary: dictionary["user"] as! NSDictionary)
@@ -44,9 +46,19 @@ class Tweet: NSObject {
             }
             
         } else {
+            // If tweet is created more than 1 day
             var getHourFormatter = NSDateFormatter()
             getHourFormatter.dateFormat = "MM/dd/yyyy"
             self.createdAtString = getHourFormatter.stringFromDate(createdAt!)
+        }
+        
+        self.retweetCount = dictionary["retweet_count"] as? Int
+        
+        var favoriteCountRetweeted = dictionary.valueForKeyPath("retweeted_status.favorite_count") as? Int
+        if favoriteCountRetweeted != nil {
+            self.favoriteCount = favoriteCountRetweeted // Get favorite count of those FUCKING retweeted statuses!
+        } else {
+            self.favoriteCount = dictionary["favorite_count"] as? Int
         }
         
         self.ID = dictionary["id_str"] as? String
@@ -55,11 +67,9 @@ class Tweet: NSObject {
     
     class func tweetWithArray(array: [NSDictionary]) -> [Tweet] {
         var tweets = [Tweet]()
-        
         for dictionary in array {
             tweets.append(Tweet(dictionary: dictionary))
         }
-        
         return tweets
     }
     

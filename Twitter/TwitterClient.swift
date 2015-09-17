@@ -61,7 +61,7 @@ class TwitterClient: BDBOAuth1RequestOperationManager {
         TwitterClient.sharedInstance.POST(URL, parameters: params, success: { (operation: AFHTTPRequestOperation!, response: AnyObject!) -> Void in
             var tweet = Tweet(dictionary: response as! NSDictionary)
             completion(tweet: tweet, error: nil)
-            
+            //println("Response1111111111: \(response)")
             }) { (operation: AFHTTPRequestOperation!, error: NSError!) -> Void in
                 completion(tweet: nil, error: error)
         }
