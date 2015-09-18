@@ -13,10 +13,11 @@ class Tweet: NSObject {
     let text: String?
     let createdAtString: String?
     let createdAt: NSDate?
-    var retweetCount: Int?
-    var favoriteCount: Int?
+    var retweetCount: Double?
+    var favoriteCount: Double?
     let ID: String?
-    var isFavorite: Int?
+    var isFavorite: Bool?
+    var isRetweeted: Bool?
 
     init(dictionary: NSDictionary) {
         self.user = User(dictionary: dictionary["user"] as! NSDictionary)
@@ -52,17 +53,26 @@ class Tweet: NSObject {
             self.createdAtString = getHourFormatter.stringFromDate(createdAt!)
         }
         
-        self.retweetCount = dictionary["retweet_count"] as? Int
+        var retweetedID = dictionary.valueForKeyPath("retweeted_status.id_str") as? String
         
-        var favoriteCountRetweeted = dictionary.valueForKeyPath("retweeted_status.favorite_count") as? Int
-        if favoriteCountRetweeted != nil {
-            self.favoriteCount = favoriteCountRetweeted // Get favorite count of those FUCKING retweeted statuses!
+        if retweetedID == nil {
+            // Tweet is not retweeted
+            self.ID = dictionary["id_str"] as? String
+            self.retweetCount = dictionary["retweet_count"] as? Double
+            self.favoriteCount = dictionary["favorite_count"] as? Double
+            self.isFavorite = dictionary["favorited"] as? Bool
+            self.isRetweeted = dictionary["retweeted"] as? Bool
         } else {
-            self.favoriteCount = dictionary["favorite_count"] as? Int
+            // Tweet is retweeted
+            self.ID = retweetedID
+            self.retweetCount = dictionary.valueForKeyPath("retweeted_status.retweet_count") as? Double
+            self.favoriteCount = dictionary.valueForKeyPath("retweeted_status.favorite_count") as? Double
+            self.isFavorite = dictionary.valueForKeyPath("retweeted_status.favorited") as? Bool
+            self.isRetweeted = dictionary.valueForKeyPath("retweeted_status.retweeted") as? Bool
         }
         
-        self.ID = dictionary["id_str"] as? String
-        self.isFavorite = dictionary["favorited"] as? Int
+    
+
     }
     
     class func tweetWithArray(array: [NSDictionary]) -> [Tweet] {

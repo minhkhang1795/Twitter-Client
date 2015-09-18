@@ -9,10 +9,10 @@
 /* Begin PBXBuildFile section */
 		2A3811751BA669470034DD3D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A3811741BA669470034DD3D /* AppDelegate.swift */; };
 		2A3811771BA669470034DD3D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A3811761BA669470034DD3D /* ViewController.swift */; };
-		2A38117A1BA669470034DD3D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2A3811781BA669470034DD3D /* Main.storyboard */; };
 		2A38117C1BA669470034DD3D /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2A38117B1BA669470034DD3D /* Images.xcassets */; };
-		2A38117F1BA669470034DD3D /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2A38117D1BA669470034DD3D /* LaunchScreen.xib */; };
 		2A38118B1BA669470034DD3D /* TwitterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A38118A1BA669470034DD3D /* TwitterTests.swift */; };
+		2A5169BB1BABC6C600FD8AFC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2A3811781BA669470034DD3D /* Main.storyboard */; };
+		2A5169BC1BABC6CA00FD8AFC /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2A38117D1BA669470034DD3D /* LaunchScreen.xib */; };
 		2A5846921BA6E2B7005788BB /* TweetsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5846911BA6E2B7005788BB /* TweetsViewController.swift */; };
 		2AB686471BA88B36007483D1 /* ComposeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AB686461BA88B36007483D1 /* ComposeViewController.swift */; };
 		2AB892CC1BA66AEC009267E1 /* TwitterClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AB892CB1BA66AEC009267E1 /* TwitterClient.swift */; };
@@ -234,6 +234,7 @@
 		2A3811671BA669470034DD3D /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 0700;
 				LastUpgradeCheck = 0640;
 				ORGANIZATIONNAME = Clover;
 				TargetAttributes = {
@@ -270,8 +271,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2A38117A1BA669470034DD3D /* Main.storyboard in Resources */,
-				2A38117F1BA669470034DD3D /* LaunchScreen.xib in Resources */,
+				2A5169BC1BABC6CA00FD8AFC /* LaunchScreen.xib in Resources */,
+				2A5169BB1BABC6C600FD8AFC /* Main.storyboard in Resources */,
 				2A38117C1BA669470034DD3D /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -477,6 +478,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Twitter/Twitter-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Ounchecked";
 			};
 			name = Release;
 		};

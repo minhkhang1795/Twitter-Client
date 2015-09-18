@@ -34,6 +34,13 @@ class ComposeViewController: UIViewController, UITextViewDelegate {
         self.textView.delegate = self
         self.tweetButton.tintColor = .lightGrayColor()
         
+        // Config navigation bar
+        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 44, height: 44))
+        imageView.contentMode = .ScaleAspectFit
+        imageView.image = UIImage(named: "TwitterLogo_white")
+        self.navigationItem.titleView = imageView
+        
+        self.navigationItem.leftBarButtonItem?.image = UIImage(named: "back")
     }
     
     override func didReceiveMemoryWarning() {
@@ -50,7 +57,7 @@ class ComposeViewController: UIViewController, UITextViewDelegate {
         let charactersRemaining = maxCharacterAllowed - count(tweetText)
         self.characterCountLabel.text = "\(charactersRemaining)/140"
         self.characterCountLabel.textColor = charactersRemaining > 10 ? .lightGrayColor() : .redColor()
-        self.tweetButton.tintColor = (count(tweetText) > 0 && count(tweetText) <= 140) ? self.view.tintColor : .lightGrayColor()
+        self.tweetButton.tintColor = (count(tweetText) > 0 && count(tweetText) <= 140) ? .whiteColor() : .grayColor()
         self.adjustScrollViewContentSize()
         
     }

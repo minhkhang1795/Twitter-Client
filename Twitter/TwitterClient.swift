@@ -48,22 +48,55 @@ class TwitterClient: BDBOAuth1RequestOperationManager {
         }
     }
     
-    func favoriteTweetWithParams(params: NSDictionary?, isFavorited: Int?, completion: (tweet: Tweet?, error: NSError?) -> ()) {
+    func favoriteTweetWithParams(params: NSDictionary?, isFavorited: Bool?, completion: (returnedTweet: Tweet?, error: NSError?) -> ()) {
         var URL: String?
-        if isFavorited! == 0 {
-            URL = "1.1/favorites/create.json"
-            println(isFavorited)
-        } else {
-            URL = "1.1/favorites/destroy.json"
-            println(isFavorited)
-        }
-        
+        URL = isFavorited! ? "1.1/favorites/destroy.json" : "1.1/favorites/create.json"
+        println(URL)
         TwitterClient.sharedInstance.POST(URL, parameters: params, success: { (operation: AFHTTPRequestOperation!, response: AnyObject!) -> Void in
             var tweet = Tweet(dictionary: response as! NSDictionary)
-            completion(tweet: tweet, error: nil)
-            //println("Response1111111111: \(response)")
+            completion(returnedTweet: tweet, error: nil)
+            
             }) { (operation: AFHTTPRequestOperation!, error: NSError!) -> Void in
-                completion(tweet: nil, error: error)
+                completion(returnedTweet: nil, error: error)
+        }
+    }
+    
+    func retweetWithParams(id: String?, isRetweeted: Bool?, completion: (returnedTweet: Tweet?, error: NSError?) -> ()) {
+        var URL: String?
+        var params: NSDictionary?
+        
+        if isRetweeted! == false {
+            // Retweet
+            URL = "/1.1/statuses/retweet/\(id!).json"
+            params = ["id": id!]
+            TwitterClient.sharedInstance.POST(URL, parameters: params, success: { (operation: AFHTTPRequestOperation!, response: AnyObject!) -> Void in
+                var tweet = Tweet(dictionary: response as! NSDictionary)
+                completion(returnedTweet: tweet, error: nil)
+               
+                }) { (operation: AFHTTPRequestOperation!, error: NSError!) -> Void in
+                    completion(returnedTweet: nil, error: error)
+            }
+        
+        } else {
+            // Unretweet
+            params = ["id": id!, "include_my_retweet": true]
+            
+            // Get current user's ID
+            TwitterClient.sharedInstance.GET("1.1/statuses/show/\(id!).json", parameters: params,
+                success: { (operation: AFHTTPRequestOperation!, response: AnyObject!) -> Void in
+                    var dictionary = response as! NSDictionary
+                    var idOfCurrentUser = dictionary.valueForKeyPath("current_user_retweet.id_str") as! String
+                    URL = "1.1/statuses/destroy/\(idOfCurrentUser).json"
+                    params = ["id": idOfCurrentUser]
+                
+                    TwitterClient.sharedInstance.POST(URL, parameters: params, success: { (operation: AFHTTPRequestOperation!, response: AnyObject!) -> Void in
+                        var tweet = Tweet(dictionary: response as! NSDictionary)
+                        completion(returnedTweet: tweet, error: nil)
+                        
+                        }) { (operation: AFHTTPRequestOperation!, error: NSError!) -> Void in
+                            completion(returnedTweet: nil, error: error)
+                    }
+                }, failure: nil)
         }
     }
     
@@ -100,7 +133,6 @@ class TwitterClient: BDBOAuth1RequestOperationManager {
             }) { (error: NSError!) -> Void in
                 println("Failed to get the access token")
                 self.loginCompletion?(user: nil, error: error)
-
         }
     }
 }

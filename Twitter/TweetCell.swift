@@ -28,12 +28,29 @@ class TweetCell: UITableViewCell {
             userScreenNameLabel.text = tweet.user?.screenname
             tweetLabel.text = tweet.text
             timeLabel.text = tweet.createdAtString
-            retweetCountLabel.text = "\(tweet.retweetCount!)"
-            favoriteCountLabel.text = "\(tweet.favoriteCount!)"
-            if tweet.isFavorite == 1 {
-                favoriteButton.setImage(UIImage(named: "star_gold"), forState: UIControlState.Normal)
+            
+            if tweet.retweetCount >= 1000 {
+                retweetCountLabel.text = String(format:"%.1fk", tweet.retweetCount!/1000)
             } else {
-                favoriteButton.setImage(UIImage(named: "star_gray"), forState: UIControlState.Normal)
+                retweetCountLabel.text = String(format:"%.0f", tweet.retweetCount!)
+            }
+            
+            if tweet.favoriteCount >= 1000 {
+                favoriteCountLabel.text = String(format:"%.1fk", tweet.favoriteCount!/1000)
+            } else {
+                favoriteCountLabel.text = String(format:"%.0f", tweet.favoriteCount!)
+            }
+            
+            if tweet.isFavorite == true {
+                self.favoriteButton.setImage(UIImage(named: "favorite_on"), forState: UIControlState.Normal)
+            } else {
+                self.favoriteButton.setImage(UIImage(named: "favorite_off"), forState: UIControlState.Normal)
+            }
+            
+            if tweet.isRetweeted == true {
+                self.retweetButton.setImage(UIImage(named: "retweet_on"), forState: UIControlState.Normal)
+            } else {
+                self.retweetButton.setImage(UIImage(named: "retweet_off"), forState: UIControlState.Normal)
             }
         }
     }
@@ -61,20 +78,55 @@ class TweetCell: UITableViewCell {
     @IBAction func onFavorite(sender: UIButton) {
         var params: NSDictionary = ["id": tweet.ID!]
         TwitterClient.sharedInstance.favoriteTweetWithParams(params, isFavorited: tweet.isFavorite, completion: { (returnedTweet, error) -> () in
-            if returnedTweet != nil {
-                self.tweet.isFavorite = returnedTweet!.isFavorite
-                if self.tweet.isFavorite == 1 {
-                    sender.setImage(UIImage(named: "star_gold"), forState: UIControlState.Normal)
-                    self.favoriteCountLabel.text = "\(++self.tweet.favoriteCount!)"
+            if error == nil {
+                if self.tweet.isFavorite == false {
+                    sender.setImage(UIImage(named: "favorite_on"), forState: UIControlState.Normal)
+                    if self.tweet.favoriteCount >= 1000 {
+                        self.favoriteCountLabel.text = String(format:"%.1fk", ++self.tweet.favoriteCount!/1000)
+                    } else {
+                        self.favoriteCountLabel.text = String(format:"%.0f", ++self.tweet.favoriteCount!)
+                    }
+                    self.tweet.isFavorite = true
                 } else {
-                    sender.setImage(UIImage(named: "star_gray"), forState: UIControlState.Normal)
-                    self.favoriteCountLabel.text = "\(--self.tweet.favoriteCount!)"
+                    sender.setImage(UIImage(named: "favorite_off"), forState: UIControlState.Normal)
+                    if self.tweet.favoriteCount >= 1000 {
+                        self.favoriteCountLabel.text = String(format:"%.1fk", --self.tweet.favoriteCount!/1000)
+                    } else {
+                        self.favoriteCountLabel.text = String(format:"%.0f", --self.tweet.favoriteCount!)
+                    }
+                    self.tweet.isFavorite = false
                 }
-            }
-            if error != nil {
+            } else {
                 NSLog("error tweeting: \(error)")
             }
         })
     }
     
+    @IBAction func onRetweet(sender: UIButton) {
+
+        TwitterClient.sharedInstance.retweetWithParams(tweet.ID, isRetweeted: tweet.isRetweeted, completion: { (returnedTweet, error) -> () in
+            if error == nil {
+                if self.tweet.isRetweeted == false {
+                    sender.setImage(UIImage(named: "retweet_on"), forState: UIControlState.Normal)
+                    if self.tweet.retweetCount >= 1000 {
+                        self.retweetCountLabel.text = String(format:"%.1fk", ++self.tweet.retweetCount!/1000)
+                    } else {
+                        self.retweetCountLabel.text = String(format:"%.0f", ++self.tweet.retweetCount!)
+                    }
+                    self.tweet.isRetweeted = true
+                } else {
+                    sender.setImage(UIImage(named: "retweet_off"), forState: UIControlState.Normal)
+                    if self.tweet.retweetCount >= 1000 {
+                        self.retweetCountLabel.text = String(format:"%.1fk", --self.tweet.retweetCount!/1000)
+                    } else {
+                        self.retweetCountLabel.text = String(format:"%.0f", --self.tweet.retweetCount!)
+                    }
+                    self.tweet.isRetweeted = false
+                }
+            } else {
+                NSLog("error tweeting: \(error)")
+            }
+        })
+
+    }
 }

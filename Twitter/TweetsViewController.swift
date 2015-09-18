@@ -18,6 +18,11 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 44, height: 44))
+        imageView.contentMode = .ScaleAspectFit
+        imageView.image = UIImage(named: "TwitterLogo_white")
+        self.navigationItem.titleView = imageView
+        
         self.fetchTweets()
         self.tableView.dataSource = self
         self.tableView.delegate = self
