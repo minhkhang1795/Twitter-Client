@@ -23,7 +23,7 @@ Time spent: <Number of hours spent>
 
 [ ] User can tap on a tweet to view it, with controls to retweet, favorite, and reply.
 
-[ ] User can retweet, favorite, and reply to the tweet directly from the timeline feed.
+[x] User can retweet, favorite, and reply to the tweet directly from the timeline feed.
 
 <b>Optional </b>
 
