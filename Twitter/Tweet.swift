@@ -23,10 +23,10 @@ class Tweet: NSObject {
         self.user = User(dictionary: dictionary["user"] as! NSDictionary)
         self.text = dictionary["text"] as? String
         
-        var created_AtString = dictionary["created_at"] as? String
-        var formatter = NSDateFormatter()
+        let createdAtStringTemp = dictionary["created_at"] as? String
+        let formatter = NSDateFormatter()
         formatter.dateFormat = "EEE MMM d HH:mm:ss Z y"
-        self.createdAt = formatter.dateFromString(created_AtString!)
+        self.createdAt = formatter.dateFromString(createdAtStringTemp!)
         
         if NSCalendar().isDateInToday(createdAt!) == false {
             var timeInterval = createdAt!.timeIntervalSinceNow

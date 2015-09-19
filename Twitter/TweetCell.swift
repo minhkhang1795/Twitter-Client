@@ -24,6 +24,8 @@ class TweetCell: UITableViewCell {
     var tweet: Tweet! {
         didSet {
             userImageView.setImageWithURL(tweet.user?.profileImageURL)
+            userImageView.layer.cornerRadius = 9.0
+            userImageView.layer.masksToBounds = true
             userNameLabel.text = tweet.user?.name
             userScreenNameLabel.text = tweet.user?.screenname
             tweetLabel.text = tweet.text
@@ -58,14 +60,14 @@ class TweetCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        tweetLabel.sizeToFit()
+        //tweetLabel.sizeToFit()
         tweetLabel.preferredMaxLayoutWidth = tweetLabel.frame.size.width
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        tweetLabel.sizeToFit()
+        //tweetLabel.sizeToFit()
         tweetLabel.preferredMaxLayoutWidth = tweetLabel.frame.size.width
     }
 
@@ -80,7 +82,11 @@ class TweetCell: UITableViewCell {
         TwitterClient.sharedInstance.favoriteTweetWithParams(params, isFavorited: tweet.isFavorite, completion: { (returnedTweet, error) -> () in
             if error == nil {
                 if self.tweet.isFavorite == false {
-                    sender.setImage(UIImage(named: "favorite_on"), forState: UIControlState.Normal)
+                    UIView.animateWithDuration(2.0, delay: 0, usingSpringWithDamping: 0.2, initialSpringVelocity: 6.0, options: UIViewAnimationOptions.AllowUserInteraction, animations: {
+                        sender.transform = CGAffineTransformMakeScale(2, 2)
+                        sender.transform = CGAffineTransformMakeScale(1, 1)
+                        sender.setImage(UIImage(named: "favorite_on"), forState: UIControlState.Normal)
+                        }, completion: nil)
                     if self.tweet.favoriteCount >= 1000 {
                         self.favoriteCountLabel.text = String(format:"%.1fk", ++self.tweet.favoriteCount!/1000)
                     } else {
@@ -88,7 +94,11 @@ class TweetCell: UITableViewCell {
                     }
                     self.tweet.isFavorite = true
                 } else {
-                    sender.setImage(UIImage(named: "favorite_off"), forState: UIControlState.Normal)
+                    UIView.animateWithDuration(2.0, delay: 0, usingSpringWithDamping: 0.2, initialSpringVelocity: 6.0, options: UIViewAnimationOptions.AllowUserInteraction, animations: {
+                        sender.transform = CGAffineTransformMakeScale(2, 2)
+                        sender.transform = CGAffineTransformMakeScale(1, 1)
+                        sender.setImage(UIImage(named: "favorite_off"), forState: UIControlState.Normal)
+                        }, completion: nil)
                     if self.tweet.favoriteCount >= 1000 {
                         self.favoriteCountLabel.text = String(format:"%.1fk", --self.tweet.favoriteCount!/1000)
                     } else {
@@ -107,7 +117,11 @@ class TweetCell: UITableViewCell {
         TwitterClient.sharedInstance.retweetWithParams(tweet.ID, isRetweeted: tweet.isRetweeted, completion: { (returnedTweet, error) -> () in
             if error == nil {
                 if self.tweet.isRetweeted == false {
-                    sender.setImage(UIImage(named: "retweet_on"), forState: UIControlState.Normal)
+                    UIView.animateWithDuration(2.0, delay: 0, usingSpringWithDamping: 0.2, initialSpringVelocity: 6.0, options: UIViewAnimationOptions.AllowUserInteraction, animations: {
+                        sender.transform = CGAffineTransformMakeScale(2, 2)
+                        sender.transform = CGAffineTransformMakeScale(1, 1)
+                        sender.setImage(UIImage(named: "retweet_on"), forState: UIControlState.Normal)
+                        }, completion: nil)
                     if self.tweet.retweetCount >= 1000 {
                         self.retweetCountLabel.text = String(format:"%.1fk", ++self.tweet.retweetCount!/1000)
                     } else {
@@ -115,7 +129,11 @@ class TweetCell: UITableViewCell {
                     }
                     self.tweet.isRetweeted = true
                 } else {
-                    sender.setImage(UIImage(named: "retweet_off"), forState: UIControlState.Normal)
+                    UIView.animateWithDuration(2.0, delay: 0, usingSpringWithDamping: 0.2, initialSpringVelocity: 6.0, options: UIViewAnimationOptions.AllowUserInteraction, animations: {
+                        sender.transform = CGAffineTransformMakeScale(2, 2)
+                        sender.transform = CGAffineTransformMakeScale(1, 1)
+                        sender.setImage(UIImage(named: "retweet_off"), forState: UIControlState.Normal)
+                        }, completion: nil)
                     if self.tweet.retweetCount >= 1000 {
                         self.retweetCountLabel.text = String(format:"%.1fk", --self.tweet.retweetCount!/1000)
                     } else {

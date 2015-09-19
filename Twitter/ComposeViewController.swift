@@ -8,6 +8,10 @@
 
 import UIKit
 
+@objc protocol ComposeViewControllerDelegate {
+    optional func composeViewController(composeViewController: ComposeViewController, didComposeTweet newTweet: Tweet)
+}
+
 class ComposeViewController: UIViewController, UITextViewDelegate {
 
     let maxCharacterAllowed = 140
@@ -19,28 +23,55 @@ class ComposeViewController: UIViewController, UITextViewDelegate {
     @IBOutlet weak var textView: UITextView!
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var tweetButton: UIBarButtonItem!
+    @IBOutlet weak var inReplyToLabel: UILabel!
+    @IBOutlet weak var inReplyToView: UIImageView!
+    
+    weak var delegate: ComposeViewControllerDelegate?
+    
+    /* Determine whether user is replying or tweeting
+    If user is replying to another tweet, then replyingTweet != nil */
+    var replyingTweet: Tweet?
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        customizeNavBar()
+        customizeTweetView()
+    }
+    
+    func customizeNavBar() {
+        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 44, height: 44))
+        imageView.contentMode = .ScaleAspectFit
+        imageView.image = UIImage(named: "TwitterLogo_white")
+        self.navigationItem.titleView = imageView
+        self.navigationItem.leftBarButtonItem?.image = UIImage(named: "back")
+    }
+    
+    func customizeTweetView() {
         self.userImageView.setImageWithURL(User.currentUser!.profileImageURL)
         self.userImageView.layer.cornerRadius = 9.0
         self.userImageView.layer.masksToBounds = true
         self.userNameLabel.text = User.currentUser?.name
         self.userScreenNameLabel.text = User.currentUser!.screenname
-        self.characterCountLabel.text = "\(maxCharacterAllowed)/140"
         self.characterCountLabel.textColor = .lightGrayColor()
         self.textView.becomeFirstResponder()
         self.textView.delegate = self
         self.tweetButton.tintColor = .lightGrayColor()
         
-        // Config navigation bar
-        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 44, height: 44))
-        imageView.contentMode = .ScaleAspectFit
-        imageView.image = UIImage(named: "TwitterLogo_white")
-        self.navigationItem.titleView = imageView
-        
-        self.navigationItem.leftBarButtonItem?.image = UIImage(named: "back")
+        if replyingTweet != nil {
+            let authorscreenName = (replyingTweet?.user?.screenname)!
+            let authorName = (replyingTweet?.user?.name)!
+            self.textView.text = "\(authorscreenName) "
+            inReplyToView.alpha = 1
+            inReplyToLabel.alpha = 1
+            inReplyToLabel.text = "In reply to \(authorName)"
+            let charactersRemaining = maxCharacterAllowed - count(self.textView.text)
+            self.characterCountLabel.text = "\(charactersRemaining)"
+        } else {
+            inReplyToView.alpha = 0
+            inReplyToLabel.alpha = 0
+            self.characterCountLabel.text = "\(maxCharacterAllowed)"
+        }
     }
     
     override func didReceiveMemoryWarning() {
@@ -55,12 +86,12 @@ class ComposeViewController: UIViewController, UITextViewDelegate {
     func textViewDidChange(textView: UITextView) {
         let tweetText = textView.text
         let charactersRemaining = maxCharacterAllowed - count(tweetText)
-        self.characterCountLabel.text = "\(charactersRemaining)/140"
+        self.characterCountLabel.text = "\(charactersRemaining)"
         self.characterCountLabel.textColor = charactersRemaining > 10 ? .lightGrayColor() : .redColor()
         self.tweetButton.tintColor = (count(tweetText) > 0 && count(tweetText) <= 140) ? .whiteColor() : .grayColor()
         self.adjustScrollViewContentSize()
-        
     }
+    
 
     @IBAction func onCancel(sender: AnyObject) {
         self.dismissViewControllerAnimated(true, completion: nil)
@@ -69,21 +100,42 @@ class ComposeViewController: UIViewController, UITextViewDelegate {
     @IBAction func onTweet(sender: AnyObject) {
         let tweetText = self.textView.text
         if (count(tweetText) > 0 && count(tweetText) <= 140) {
-            var params: NSDictionary = ["status": tweetText]
             
-            TwitterClient.sharedInstance.tweetWithParams(params, completion: { (tweet, error) -> () in
-                if error != nil {
-                    NSLog("error posting status: \(error)")
-                }
-                self.dismissViewControllerAnimated(true, completion: nil)
-            })
+            if replyingTweet != nil {
+                // User is Replying
+                let params = ["status": tweetText!, "in_reply_to_status_id": replyingTweet!.ID!]
+                TwitterClient.sharedInstance.replyTweetWithParam(params, completion: { (tweet, error) -> () in
+                    if let tweet = tweet {
+                        self.dismissViewControllerAnimated(true, completion: { () -> Void in
+                            self.delegate?.composeViewController?(self, didComposeTweet: tweet)
+                        })
+                    }
+                    if error != nil {
+                        NSLog("error posting status: \(error)")
+                    }
+                })
+            
+            } else {
+                // User is Tweeting
+                var params: NSDictionary = ["status": tweetText]
+                TwitterClient.sharedInstance.tweetWithParams(params, completion: { (tweet, error) -> () in
+                    if let tweet = tweet {
+                        self.dismissViewControllerAnimated(true, completion: { () -> Void in
+                            self.delegate?.composeViewController?(self, didComposeTweet: tweet)
+                        })
+                    }
+                    if error != nil {
+                        NSLog("error posting status: \(error)")
+                    }
+                })
+            }
+            
         }
     }
     
     func adjustScrollViewContentSize() {
         self.scrollView.contentSize = CGSizeMake(self.scrollView.frame.size.width, self.textView.frame.origin.y + self.textView.frame.size.height)
     }
-    
     
     /*
     // MARK: - Navigation

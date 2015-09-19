@@ -9,13 +9,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Twitter/TwitterClient.swift"
-            timestampString = "464286776.562757"
+            filePath = "Twitter/TweetsViewController.swift"
+            timestampString = "464348748.802296"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "56"
-            endingLineNumber = "56"
-            landmarkName = "favoriteTweetWithParams(_:isFavorited:completion:)"
+            startingLineNumber = "69"
+            endingLineNumber = "69"
+            landmarkName = "onLogout(_:)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -25,13 +25,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Twitter/TwitterClient.swift"
-            timestampString = "464286863.055361"
+            filePath = "Twitter/User.swift"
+            timestampString = "464348766.565918"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "54"
-            endingLineNumber = "54"
-            landmarkName = "favoriteTweetWithParams(_:isFavorited:completion:)"
+            startingLineNumber = "61"
+            endingLineNumber = "61"
+            landmarkName = "logout()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -41,46 +41,14 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Twitter/TwitterClient.swift"
-            timestampString = "464286869.726799"
+            filePath = "Twitter/AppDelegate.swift"
+            timestampString = "464348779.944695"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "55"
-            endingLineNumber = "55"
-            landmarkName = "favoriteTweetWithParams(_:isFavorited:completion:)"
+            startingLineNumber = "31"
+            endingLineNumber = "31"
+            landmarkName = "userDidLogout()"
             landmarkType = "5">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Twitter.TwitterClient.favoriteTweetWithParams (Twitter.TwitterClient)(Swift.Optional&lt;ObjectiveC.NSDictionary&gt;, isFavorited : Swift.Optional&lt;Swift.Bool&gt;, completion : (returnedTweet : Swift.Optional&lt;Twitter.Tweet&gt;, error : Swift.Optional&lt;ObjectiveC.NSError&gt;) -&gt; ()) -&gt; ()"
-                  moduleName = "Twitter"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/duyvu/Documents/iOS%20Programming/Project/Twitter/Twitter/TwitterClient.swift"
-                  timestampString = "464287430.726505"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "55"
-                  endingLineNumber = "55"
-                  offsetFromSymbolStart = "656">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Twitter.TwitterClient.(favoriteTweetWithParams (Twitter.TwitterClient) -&gt; (Swift.Optional&lt;ObjectiveC.NSDictionary&gt;, isFavorited : Swift.Optional&lt;Swift.Bool&gt;, completion : (returnedTweet : Swift.Optional&lt;Twitter.Tweet&gt;, error : Swift.Optional&lt;ObjectiveC.NSError&gt;) -&gt; ()) -&gt; ()).(closure #1)"
-                  moduleName = "Twitter"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/duyvu/Documents/iOS%20Programming/Project/Twitter/Twitter/TwitterClient.swift"
-                  timestampString = "464287430.72699"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "56"
-                  endingLineNumber = "56"
-                  offsetFromSymbolStart = "23">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

@@ -22,7 +22,15 @@ class TwitterClient: BDBOAuth1RequestOperationManager {
         return Static.instance
     }
     
-    func homeTimelineWithParams(params: NSDictionary?, completion: (tweets: [Tweet]?, error: NSError?) -> ()) {
+    func homeTimelineWithParams(tweetCount count: Int?, maxID: String?, completion: (tweets: [Tweet]?, error: NSError?) -> ()) {
+        var params = [String : AnyObject]()
+        if count != nil {
+            params["count"] = count
+        }
+        if maxID != nil {
+            params["max_id"] = maxID
+        }
+        
         TwitterClient.sharedInstance.GET("1.1/statuses/home_timeline.json", parameters: params,
             success: { (operation: AFHTTPRequestOperation!, response: AnyObject!) -> Void in
                 var tweets = Tweet.tweetWithArray(response as! [NSDictionary])
@@ -46,6 +54,19 @@ class TwitterClient: BDBOAuth1RequestOperationManager {
                 println("error posting tweet")
                 completion(tweet: nil, error: error)
         }
+    }
+    
+    func replyTweetWithParam(params: NSDictionary?, completion: (tweet: Tweet?, error: NSError?) -> ()) {
+
+        TwitterClient.sharedInstance.POST("1.1/statuses/update.json", parameters: params, success: { (operation: AFHTTPRequestOperation!, response: AnyObject!) -> Void in
+            
+            var repliedTweet = Tweet(dictionary: response as! NSDictionary)
+            completion(tweet: repliedTweet, error: nil)
+            
+            }, failure: { (operation: AFHTTPRequestOperation!, error: NSError!) -> Void in
+                println("error updating new tweet")
+                completion(tweet: nil, error: error)
+        })
     }
     
     func favoriteTweetWithParams(params: NSDictionary?, isFavorited: Bool?, completion: (returnedTweet: Tweet?, error: NSError?) -> ()) {
