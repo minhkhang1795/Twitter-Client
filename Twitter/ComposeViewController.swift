@@ -59,12 +59,21 @@ class ComposeViewController: UIViewController, UITextViewDelegate {
         self.tweetButton.tintColor = .lightGrayColor()
         
         if replyingTweet != nil {
-            let authorscreenName = (replyingTweet?.user?.screenname)!
-            let authorName = (replyingTweet?.user?.name)!
-            self.textView.text = "\(authorscreenName) "
+            let authorScreenName = replyingTweet!.user!.screenname
+            let originAuthorScreenName = replyingTweet!.originauthorscreenname
+            
+            if originAuthorScreenName == nil {
+                self.textView.text = "\(authorScreenName!) "
+            } else {
+                // Get retweeting author + original author's screen names
+                self.textView.text = "\(authorScreenName!) \(originAuthorScreenName!) "
+            }
+            
+            let authorName = replyingTweet!.user!.name
+            inReplyToLabel.text = "In reply to \(authorName!)"
             inReplyToView.alpha = 1
             inReplyToLabel.alpha = 1
-            inReplyToLabel.text = "In reply to \(authorName)"
+            
             let charactersRemaining = maxCharacterAllowed - count(self.textView.text)
             self.characterCountLabel.text = "\(charactersRemaining)"
         } else {
@@ -99,12 +108,11 @@ class ComposeViewController: UIViewController, UITextViewDelegate {
 
     @IBAction func onTweet(sender: AnyObject) {
         let tweetText = self.textView.text
+        
         if (count(tweetText) > 0 && count(tweetText) <= 140) {
-            
             if replyingTweet != nil {
                 // User is Replying
-                let params = ["status": tweetText!, "in_reply_to_status_id": replyingTweet!.ID!]
-                TwitterClient.sharedInstance.replyTweetWithParam(params, completion: { (tweet, error) -> () in
+                TwitterClient.sharedInstance.replyTweetWithParam(tweetText, id: replyingTweet!.ID!, completion: { (tweet, error) -> () in
                     if let tweet = tweet {
                         self.dismissViewControllerAnimated(true, completion: { () -> Void in
                             self.delegate?.composeViewController?(self, didComposeTweet: tweet)
@@ -117,8 +125,7 @@ class ComposeViewController: UIViewController, UITextViewDelegate {
             
             } else {
                 // User is Tweeting
-                var params: NSDictionary = ["status": tweetText]
-                TwitterClient.sharedInstance.tweetWithParams(params, completion: { (tweet, error) -> () in
+                TwitterClient.sharedInstance.tweetWithParams(tweetText, completion: { (tweet, error) -> () in
                     if let tweet = tweet {
                         self.dismissViewControllerAnimated(true, completion: { () -> Void in
                             self.delegate?.composeViewController?(self, didComposeTweet: tweet)

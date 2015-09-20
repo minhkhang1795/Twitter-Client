@@ -10,6 +10,7 @@ import UIKit
 
 class Tweet: NSObject {
     let user: User?
+    let originauthorscreenname: String?
     let text: String?
     let createdAtString: String?
     let createdAt: NSDate?
@@ -21,6 +22,14 @@ class Tweet: NSObject {
 
     init(dictionary: NSDictionary) {
         self.user = User(dictionary: dictionary["user"] as! NSDictionary)
+        
+        let originalAuthorScreenName = dictionary.valueForKeyPath("retweeted_status.user.screen_name") as? String
+        if originalAuthorScreenName != nil {
+            self.originauthorscreenname = "@" + originalAuthorScreenName!
+        } else {
+            self.originauthorscreenname = nil
+        }
+        
         self.text = dictionary["text"] as? String
         
         let createdAtStringTemp = dictionary["created_at"] as? String
@@ -63,6 +72,7 @@ class Tweet: NSObject {
             self.isFavorite = dictionary["favorited"] as? Bool
             self.isRetweeted = dictionary["retweeted"] as? Bool
         } else {
+            println(dictionary)
             // Tweet is retweeted
             self.ID = retweetedID
             self.retweetCount = dictionary.valueForKeyPath("retweeted_status.retweet_count") as? Double

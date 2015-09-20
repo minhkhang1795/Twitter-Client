@@ -60,14 +60,12 @@ class TweetCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        //tweetLabel.sizeToFit()
         tweetLabel.preferredMaxLayoutWidth = tweetLabel.frame.size.width
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        //tweetLabel.sizeToFit()
         tweetLabel.preferredMaxLayoutWidth = tweetLabel.frame.size.width
     }
 
@@ -78,8 +76,8 @@ class TweetCell: UITableViewCell {
     }
     
     @IBAction func onFavorite(sender: UIButton) {
-        var params: NSDictionary = ["id": tweet.ID!]
-        TwitterClient.sharedInstance.favoriteTweetWithParams(params, isFavorited: tweet.isFavorite, completion: { (returnedTweet, error) -> () in
+        let id = tweet.ID!
+        TwitterClient.sharedInstance.favoriteTweetWithParams(id, isFavorited: tweet.isFavorite, completion: { (returnedTweet, error) -> () in
             if error == nil {
                 if self.tweet.isFavorite == false {
                     UIView.animateWithDuration(2.0, delay: 0, usingSpringWithDamping: 0.2, initialSpringVelocity: 6.0, options: UIViewAnimationOptions.AllowUserInteraction, animations: {

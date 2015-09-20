@@ -44,7 +44,9 @@ class TwitterClient: BDBOAuth1RequestOperationManager {
         })
     }
     
-    func tweetWithParams(params: NSDictionary?, completion: (tweet: Tweet?, error: NSError?) -> ()) {
+    func tweetWithParams(tweetText: String, completion: (tweet: Tweet?, error: NSError?) -> ()) {
+        
+        let params: NSDictionary = ["status": tweetText]
         TwitterClient.sharedInstance.POST("1.1/statuses/update.json", parameters: params,
             success: { (operation: AFHTTPRequestOperation!, response: AnyObject!) -> Void in
                 var tweet = Tweet(dictionary: response as! NSDictionary)
@@ -56,8 +58,9 @@ class TwitterClient: BDBOAuth1RequestOperationManager {
         }
     }
     
-    func replyTweetWithParam(params: NSDictionary?, completion: (tweet: Tweet?, error: NSError?) -> ()) {
+    func replyTweetWithParam(tweetText: String, id: String, completion: (tweet: Tweet?, error: NSError?) -> ()) {
 
+        let params = ["status": tweetText, "in_reply_to_status_id": id]
         TwitterClient.sharedInstance.POST("1.1/statuses/update.json", parameters: params, success: { (operation: AFHTTPRequestOperation!, response: AnyObject!) -> Void in
             
             var repliedTweet = Tweet(dictionary: response as! NSDictionary)
@@ -69,10 +72,10 @@ class TwitterClient: BDBOAuth1RequestOperationManager {
         })
     }
     
-    func favoriteTweetWithParams(params: NSDictionary?, isFavorited: Bool?, completion: (returnedTweet: Tweet?, error: NSError?) -> ()) {
-        var URL: String?
-        URL = isFavorited! ? "1.1/favorites/destroy.json" : "1.1/favorites/create.json"
-        println(URL)
+    func favoriteTweetWithParams(id: String, isFavorited: Bool?, completion: (returnedTweet: Tweet?, error: NSError?) -> ()) {
+        let params = ["id": id]
+        let URL = isFavorited! ? "1.1/favorites/destroy.json" : "1.1/favorites/create.json"
+        
         TwitterClient.sharedInstance.POST(URL, parameters: params, success: { (operation: AFHTTPRequestOperation!, response: AnyObject!) -> Void in
             var tweet = Tweet(dictionary: response as! NSDictionary)
             completion(returnedTweet: tweet, error: nil)
