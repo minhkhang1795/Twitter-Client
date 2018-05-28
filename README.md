@@ -1,11 +1,11 @@
-<b>Twitter</b>
+# Twitter
 =================
 
 This is a basic twitter app to read and compose tweets the Twitter API.
 
 Time spent: 25 hrs
 
-#<b>Features</b>
+## Features
 
 <b>Required</b>
 
@@ -39,5 +39,5 @@ Time spent: 25 hrs
 
 - [x] User can load more tweets once they reach the bottom of the feed using infinite loading similar to the actual Twitter client.
 
-#<b>Walkthrough</b>
+## Walkthrough
 ![alt tag](https://github.com/vuminhkhang1995/Twitter-Client/blob/master/Walkthrough.gif)
